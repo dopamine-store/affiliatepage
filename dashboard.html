@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Campus Ambassador Dashboard - Check your sales and commission earnings from The Dopamine Store affiliate program.">
+    <meta name="keywords"
+        content="affiliate dashboard, campus ambassador, commission tracker, sales report">
+    <title>Ambassador Dashboard | The Dopamine Store</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://thedopaminestore.in/cdn/shop/files/favicon_32x32.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Dashboard-specific styles */
+        .dashboard-hero {
+            padding: 8rem 0 4rem;
+            margin-top: 73px;
+            text-align: center;
+        }
+
+        .dashboard-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2rem;
+            padding: 3rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .coupon-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: var(--transition);
+        }
+
+        .coupon-input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .coupon-input::placeholder {
+            color: var(--text-muted);
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .check-btn {
+            padding: 1rem 2rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .check-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Results Section */
+        .results-section {
+            margin-top: 3rem;
+            display: none;
+        }
+
+        .results-section.visible {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .result-value.highlight {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Earnings Card */
+        .earnings-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .earnings-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .earnings-amount {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tentative-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(251, 191, 36, 0.15);
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fbbf24;
+            margin-top: 1rem;
+        }
+
+        /* Info Notices */
+        .info-notice {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .info-notice h4 {
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-notice p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .info-notice ul {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+            padding-left: 1.5rem;
+        }
+
+        .info-notice li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* No Data State */
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .no-data-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .no-data h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .no-data p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Error state */
+        .error-notice {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            color: #ef4444;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+
+        .back-link svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Code display */
+        .code-display {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://thedopaminestore.in/cdn/shop/files/logo_white_9f3c8854-68fa-452b-993b-1a45120b0e6f.png?v=1754287726&width=140"
+                        alt="The Dopamine Store" class="logo-image">
+                    <div>
+                        <h1>THE DOPAMINE STORE</h1>
+                        <p class="tagline">Ambassador Dashboard</p>
+                    </div>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Program Info</a>
+                    <a href="https://thedopaminestore.in" class="nav-link" target="_blank">Visit Store</a>
+                </nav>
+                <button class="mobile-menu-btn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <a href="index.html" class="mobile-nav-link">Program Info</a>
+        <a href="https://thedopaminestore.in" class="mobile-nav-link" target="_blank">Visit Store</a>
+    </div>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-hero">
+        <div class="hero-background"></div>
+        <div class="container">
+            <a href="index.html" class="back-link">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back to Program Info
+            </a>
+
+            <div class="dashboard-card">
+                <h2 class="section-title">Check Your Earnings</h2>
+                <p class="section-subtitle" style="margin-bottom: 0;">Enter your unique coupon code to view your sales and commission</p>
+
+                <div class="input-group">
+                    <input type="text" class="coupon-input" id="couponInput" placeholder="Enter your coupon code" maxlength="10">
+                    <button class="check-btn" id="checkBtn" onclick="checkEarnings()">
+                        <span id="btnText">Check Earnings</span>
+                        <span id="btnSpinner" class="spinner" style="display: none;"></span>
+                    </button>
+                </div>
+
+                <div id="errorNotice" class="error-notice" style="display: none;"></div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection">
+                    <div id="resultsContent"></div>
+                </div>
+
+                <!-- Info Notice (always visible) -->
+                <div class="info-notice">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Important Information
+                    </h4>
+                    <ul>
+                        <li><strong>Weekly Updates:</strong> This report is updated every week. Check back for latest sales data.</li>
+                        <li><strong>Tentative Earnings:</strong> Commission amounts are tentative as returns and cancellations may reduce the final amount.</li>
+                        <li><strong>Payout Timeline:</strong> Payouts are released after the return period ends (~60 days, varies by product) to ensure no further cancellations occur.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>THE DOPAMINE STORE</h3>
+                    <p>The Place You Buy Happiness</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://thedopaminestore.in/policies/privacy-policy" target="_blank">Privacy Policy</a>
+                    <a href="https://thedopaminestore.in/policies/refund-policy" target="_blank">Refund Policy</a>
+                    <a href="https://thedopaminestore.in/policies/terms-of-service" target="_blank">Terms of Service</a>
+                </div>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com/dop.aminestore/" target="_blank" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 2C14.717 2 15.056 2.01 16.122 2.06C17.187 2.11 17.912 2.277 18.55 2.525C19.21 2.779 19.766 3.123 20.322 3.678C20.8305 4.1779 21.224 4.78259 21.475 5.45C21.722 6.087 21.89 6.813 21.94 7.878C21.987 8.944 22 9.283 22 12C22 14.717 21.99 15.056 21.94 16.122C21.89 17.187 21.722 17.912 21.475 18.55C21.2247 19.2178 20.8311 19.8226 20.322 20.322C19.822 20.8303 19.2173 21.2238 18.55 21.475C17.913 21.722 17.187 21.89 16.122 21.94C15.056 21.987 14.717 22 12 22C9.283 22 8.944 21.99 7.878 21.94C6.813 21.89 6.088 21.722 5.45 21.475C4.78233 21.2245 4.17753 20.8309 3.678 20.322C3.16941 19.8222 2.77593 19.2175 2.525 18.55C2.277 17.913 2.11 17.187 2.06 16.122C2.013 15.056 2 14.717 2 12C2 9.283 2.01 8.944 2.06 7.878C2.11 6.812 2.277 6.088 2.525 5.45C2.77524 4.78218 3.1688 4.17732 3.678 3.678C4.17767 3.16923 4.78243 2.77573 5.45 2.525C6.088 2.277 6.812 2.11 7.878 2.06C8.944 2.013 9.283 2 12 2ZM12 7C10.6739 7 9.40215 7.52678 8.46447 8.46447C7.52678 9.40215 7 10.6739 7 12C7 13.3261 7.52678 14.5979 8.46447 15.5355C9.40215 16.4732 10.6739 17 12 17C13.3261 17 14.5979 16.4732 15.5355 15.5355C16.4732 14.5979 17 13.3261 17 12C17 10.6739 16.4732 9.40215 15.5355 8.46447C14.5979 7.52678 13.3261 7 12 7ZM18.5 6.75C18.5 6.41848 18.3683 6.10054 18.1339 5.86612C17.8995 5.6317 17.5815 5.5 17.25 5.5C16.9185 5.5 16.6005 5.6317 16.3661 5.86612C16.1317 6.10054 16 6.41848 16 6.75C16 7.08152 16.1317 7.39946 16.3661 7.63388C16.6005 7.8683 16.9185 8 17.25 8C17.5815 8 17.8995 7.8683 18.1339 7.63388C18.3683 7.39946 18.5 7.08152 18.5 6.75ZM12 9C12.7956 9 13.5587 9.31607 14.1213 9.87868C14.6839 10.4413 15 11.2044 15 12C15 12.7956 14.6839 13.5587 14.1213 14.1213C13.5587 14.6839 12.7956 15 12 15C11.2044 15 10.4413 14.6839 9.87868 14.1213C9.31607 13.5587 9 12.7956 9 12C9 11.2044 9.31607 10.4413 9.87868 9.87868C10.4413 9.31607 11.2044 9 12 9Z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 The Dopamine Store. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            mobileMenuBtn.classList.toggle('active');
+        });
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.classList.remove('active');
+            });
+        });
+
+        // CSV Data storage
+        let salesData = [];
+
+        // Load and parse CSV on page load
+        async function loadCSVData() {
+            try {
+                const response = await fetch('Sales by discount codes for export.csv');
+                const csvText = await response.text();
+                salesData = parseCSV(csvText);
+            } catch (error) {
+                console.error('Error loading CSV:', error);
+            }
+        }
+
+        // Parse CSV text into array of objects
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = parseCSVLine(lines[0]);
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim()) {
+                    const values = parseCSVLine(lines[i]);
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header.replace(/"/g, '')] = values[index] ? values[index].replace(/"/g, '') : '';
+                    });
+                    data.push(row);
+                }
+            }
+            return data;
+        }
+
+        // Parse a single CSV line (handles quoted values)
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 2
+            }).format(amount);
+        }
+
+        // Check earnings for a coupon code
+        function checkEarnings() {
+            const input = document.getElementById('couponInput');
+            const btn = document.getElementById('checkBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const errorNotice = document.getElementById('errorNotice');
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsContent = document.getElementById('resultsContent');
+
+            const couponCode = input.value.trim().toUpperCase();
+
+            // Validate input
+            if (!couponCode) {
+                errorNotice.textContent = 'Please enter your coupon code';
+                errorNotice.style.display = 'block';
+                resultsSection.classList.remove('visible');
+                return;
+            }
+
+            // Show loading state
+            btn.disabled = true;
+            btnText.textContent = 'Checking...';
+            btnSpinner.style.display = 'inline-block';
+            errorNotice.style.display = 'none';
+
+            // Simulate brief loading for better UX
+            setTimeout(() => {
+                // Find the coupon in data
+                const couponData = salesData.find(row =>
+                    row['Discount name'] && row['Discount name'].toUpperCase() === couponCode
+                );
+
+                if (couponData) {
+                    // Parse numeric values
+                    const grossSales = parseFloat(couponData['Gross sales']) || 0;
+                    const returns = parseFloat(couponData['Returns']) || 0;
+                    const netSales = parseFloat(couponData['Net sales']) || 0;
+                    const orders = parseInt(couponData['Discounted orders']) || 0;
+                    const commission = netSales * 0.05; // 5% commission
+
+                    resultsContent.innerHTML = `
+                        <div class="code-display">${couponCode}</div>
+
+                        <div class="results-grid">
+                            <div class="result-card">
+                                <div class="result-label">Total Orders</div>
+                                <div class="result-value highlight">${orders}</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-label">Gross Sales</div>
+                                <div class="result-value">${formatCurrency(grossSales)}</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-label">Returns</div>
+                                <div class="result-value">${formatCurrency(Math.abs(returns))}</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-label">Net Sales</div>
+                                <div class="result-value highlight">${formatCurrency(netSales)}</div>
+                            </div>
+                        </div>
+
+                        <div class="earnings-card">
+                            <div class="earnings-title">Your Commission (5% of Net Sales)</div>
+                            <div class="earnings-amount">${formatCurrency(commission)}</div>
+                            <div class="tentative-badge">Tentative - Subject to returns & cancellations</div>
+                        </div>
+                    `;
+                } else {
+                    resultsContent.innerHTML = `
+                        <div class="no-data">
+                            <div class="no-data-icon">📊</div>
+                            <h3>No Sales Found</h3>
+                            <p>No sales have been recorded for coupon code <strong>${couponCode}</strong> yet.</p>
+                            <p style="margin-top: 1rem; color: var(--text-muted);">
+                                Keep promoting your code! Once someone makes a purchase using your code,
+                                it will appear here. Reports are updated weekly, so check back later.
+                            </p>
+                        </div>
+                    `;
+                }
+
+                resultsSection.classList.add('visible');
+
+                // Reset button state
+                btn.disabled = false;
+                btnText.textContent = 'Check Earnings';
+                btnSpinner.style.display = 'none';
+            }, 500);
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('couponInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkEarnings();
+            }
+        });
+
+        // Load CSV data when page loads
+        document.addEventListener('DOMContentLoaded', loadCSVData);
+
+        // Header scroll effect
+        const header = document.querySelector('.header');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > 100) {
+                header.style.background = 'rgba(15, 15, 30, 0.95)';
+                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.background = 'rgba(15, 15, 30, 0.8)';
+                header.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>
