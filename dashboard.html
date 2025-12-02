@@ -538,7 +538,7 @@
                     const returns = parseFloat(couponData['Returns']) || 0;
                     const netSales = parseFloat(couponData['Net sales']) || 0;
                     const orders = parseInt(couponData['Discounted orders']) || 0;
-                    const commission = netSales * 0.05; // 5% commission
+                    const commission = netSales * 0.10; // 10% commission
 
                     resultsContent.innerHTML = `
                         <div class="code-display">${couponCode}</div>
@@ -563,7 +563,7 @@
                         </div>
 
                         <div class="earnings-card">
-                            <div class="earnings-title">Your Commission (5% of Net Sales)</div>
+                            <div class="earnings-title">Your Commission (10% of Net Sales)</div>
                             <div class="earnings-amount">${formatCurrency(commission)}</div>
                             <div class="tentative-badge">Tentative - Subject to returns & cancellations</div>
                         </div>
