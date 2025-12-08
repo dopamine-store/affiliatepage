@@ -1,8 +1,11 @@
 "Discount name","Discount method","Discount type","Discount class","Applied discounts","Discounted orders","Gross sales","Returns","Net sales","Shipping charges","Taxes","Total sales"
 "D286CB","discount_code","percentage","order",-162.25,2,3245,0,3082.75,0,0,3082.75
+"DK8N3M","discount_code","percentage","order",-67.4,1,1348,0,1280.6,0,0,1280.6
 "83626B","discount_code","percentage","order",-59.95,1,1199,0,1139.05,0,0,1139.05
+"943JX3","discount_code","percentage","order",-54.95,1,1099,0,1044.05,0,0,1044.05
 "C2FZX8","discount_code","percentage","order",-54.95,1,1099,0,1044.05,0,0,1044.05
 "9873V9","discount_code","percentage","order",-52.35,1,1047,0,994.65,0,0,994.65
 "37692G","discount_code","percentage","order",-44.9,1,898,0,853.1,0,0,853.1
+"9ZP35G","discount_code","percentage","order",-24.95,1,499,0,474.05,0,0,474.05
 "7W3KMR","discount_code","percentage","order",-24.95,1,499,0,474.05,0,0,474.05
 "2P4MHP","discount_code","percentage","order",-19.9,2,398,0,378.1,0,0,378.1
